@@ -108,7 +108,7 @@ Edit your name, avatar, and view your joined projects and available credits — 
 
 1. **Clone the repository**
    ```sh
-   git clone [https://github.com/Meghashree-V/RepoBrief.git](https://github.com/Meghashree-V/RepoBrief.git)
+   git clone [https://github.com/lskolhar/Repobrief.git](https://github.com/lskolhar/Repobrief.git)
    cd RepoBrief
 
 2. **Install dependencies**
