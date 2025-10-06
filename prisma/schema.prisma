@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(cuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  imageUrl          String?
+  firstName         String?
+  lastName          String?
+  emailAddress      String             @unique
+  credits           Int                @default(150)
+  questions         Question[]
+  userToProject     UserToProject[]
+  stripeTransactions StripeTransaction[]
+}
+
+model Project {
+  id               String                @id @default(cuid())
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+  name             String
+  githuburl        String?
+  deletedAt        DateTime?
+  commits          Commit[]
+  questions        Question[]
+  sourceEmbeddings SourceCodeEmbedding[]
+  userToProject    UserToProject[]
+}
+
+model Commit {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  projectId    String
+  message      String
+  commitHash   String   @unique
+  authorName   String
+  authorAvatar String
+  committedAt  DateTime
+  summary      String
+  project      Project  @relation(fields: [projectId], references: [id])
+}
+
+model UserToProject {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, projectId])
+}
+
+model SourceCodeEmbedding {
+  id         String  @id @default(cuid())
+  fileName   String
+  summary    String
+  sourceCode String?
+  embedding  Float[]
+  projectId  String
+  project    Project @relation(fields: [projectId], references: [id])
+}
+
+model Question {
+  id              String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  question        String
+  answer          String
+  referencedFiles Json?
+  projectId       String
+  userId          String
+  project         Project  @relation(fields: [projectId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+model StripeTransaction {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  credits   Int
+  user      User     @relation(fields: [userId], references: [id])
+}
